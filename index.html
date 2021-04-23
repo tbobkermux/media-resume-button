@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Media Chrome Netflix Theme Example</title>
+    <script type="module" src="./playhead-position.js"></script>
+  </head>
+  <body>
+
+    <video
+    slot="media"
+    src="http://stream.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/high.mp4"
+    muted
+    preload="none"
+    id="video-player"
+    width="350" height="200"
+    controls
+  ></video>
+
+    <playhead-position data-videoid="123456" data-video-player="video-player" />
+  </body>
+</html>
