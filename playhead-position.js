@@ -4,40 +4,74 @@ const template = document.createElement("tempalte");
 template.innerHTML = ``;
 
 class playheadPosition extends HTMLElement {
+
   constructor() {
+
     super();
     this.attachShadow({ mode: "open" });
-    this.videoid = document.querySelector("playhead-position").dataset.videoid;
-    this.playerid = document.querySelector(
-      "playhead-position"
-    ).dataset.videoPlayer;
+    this._playheadPositionElm = document.querySelector("playhead-position");
+    this._userid = this._playheadPositionElm.dataset.userid ?? 0;
+    this.videoid = this._playheadPositionElm.dataset.videoid;
+    this.player = document.getElementById(this._playheadPositionElm.dataset.videoPlayer);
+
     this.trackPlayheadPosition = this.trackPlayheadPosition.bind(this);
     this.setPlayheadPosition = this.setPlayheadPosition.bind(this);
 
-    document.getElementById(this.playerid).addEventListener("timeupdate", this.trackPlayheadPosition, false);
-    document.getElementById(this.playerid).addEventListener("play", this.setPlayheadPosition, false);
+    this.player.addEventListener("timeupdate", this.trackPlayheadPosition, false);
+    this.player.addEventListener("play", this.setPlayheadPosition, false);
+
+    this.player.addEventListener("pause", (evt) => {
+        this.playheadPositionServerSide("paused");
+    });
+
+    document.addEventListener('visibilitychange',(evt) => {
+        this.playheadPositionServerSide();
+    });
 
   }
 
-  trackPlayheadPosition() {
-    storage(
-      "set",
-      this.videoid,
-      document.getElementById(this.playerid).currentTime
-    );
+  playheadPositionServerSide(isPaused = null){
 
+    let analyticsData = {
+        "videoid": this.videoid.toString(),
+        "timeTracked": storage("get", this.videoid),
+        "userid": this._userid,
+        "timestamp": Date.now().toString()
+    }
+    
+    if(this._userid > 0){
+
+        if(isPaused == null && document.visibilityState === 'hidden'){
+            console.log("sending analytics data user hidden page" + JSON.stringify(analyticsData));
+            this.player.pause();
+            //navigator.sendBeacon('/log', analyticsData);
+            return;
+        }
+
+        if(isPaused == 'paused'){
+            console.log("sending analytics data user paused" + JSON.stringify(analyticsData));
+            //navigator.sendBeacon('/log', analyticsData);
+            return;
+        }
+    }
+    return;
+    
+  }
+
+  trackPlayheadPosition() {
+    storage("set",this.videoid,this.player.currentTime);
   }
 
   setPlayheadPosition() {
 
-    document.getElementById(this.playerid).addEventListener("loadeddata", 
+    this.player.addEventListener("loadeddata", 
     (evt) => {
         let getTime = storage("get", this.videoid);
-        let duration = document.getElementById(this.playerid).duration;
+        let duration = this.player.duration;
         if(getTime < duration){
-            document.getElementById(this.playerid).currentTime = getTime;
+            this.player.currentTime = getTime;
         } else {
-            document.getElementById(this.playerid).currentTime = 0;
+            this.player.currentTime = 0;
         }
         //console.log(duration);
     }, false);
