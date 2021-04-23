@@ -33,23 +33,21 @@ class playheadPosition extends HTMLElement {
   playheadPositionServerSide(isPaused = null){
 
     let analyticsData = {
+        "userid": this._userid,
         "videoid": this.videoid.toString(),
         "timeTracked": storage("get", this.videoid),
-        "userid": this._userid,
         "timestamp": Date.now().toString()
     }
     
     if(this._userid > 0){
 
         if(isPaused == null && document.visibilityState === 'hidden'){
-            console.log("sending analytics data user hidden page" + JSON.stringify(analyticsData));
             this.player.pause();
-            //navigator.sendBeacon('/log', analyticsData);
             return;
         }
 
         if(isPaused == 'paused'){
-            console.log("sending analytics data user paused" + JSON.stringify(analyticsData));
+            console.log("Server side tracking:" + JSON.stringify(analyticsData));
             //navigator.sendBeacon('/log', analyticsData);
             return;
         }
