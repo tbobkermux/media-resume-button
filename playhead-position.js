@@ -1,15 +1,17 @@
 import storage from "./storage.js";
 
-const template = document.createElement("tempalte");
-template.innerHTML = ``;
+const template = document.createElement("template");
+template.innerHTML = `<div style="display:block;"><input type="checkbox" id="confirmtracking">Click to track where to reume from</div>`;
 
 class playheadPosition extends HTMLElement {
 
   constructor() {
 
     super();
-    this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: "open" }).appendChild(template.cloneNode(true));
+
     this._playheadPositionElm = document.querySelector("playhead-position");
+
     this._userid = this._playheadPositionElm.dataset.userid ?? 0;
     this.videoid = this._playheadPositionElm.dataset.videoid;
     this.player = document.getElementById(this._playheadPositionElm.dataset.videoPlayer);
@@ -47,8 +49,7 @@ class playheadPosition extends HTMLElement {
         }
 
         if(isPaused == 'paused'){
-            console.log("Server side tracking:" + JSON.stringify(analyticsData));
-            //navigator.sendBeacon('/log', analyticsData);
+            storage("track", undefined, undefined, analyticsData);
             return;
         }
     }
@@ -71,7 +72,6 @@ class playheadPosition extends HTMLElement {
         } else {
             this.player.currentTime = 0;
         }
-        //console.log(duration);
     }, false);
   }
 }
