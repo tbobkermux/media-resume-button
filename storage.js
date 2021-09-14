@@ -1,29 +1,24 @@
 
-var faunadb = window.faunadb
-var q = faunadb.query;
-var client = new faunadb.Client({ secret: 'fnAEHuVFwvACBVJLGIsyhHVmk9vh2_i5F6BE_o5R' })
+export function useLocalStorage(evt, data = {}){
 
+  if(typeof evt === 'string' && typeof data === 'object'){
 
-export default function storage(setGet, videoid, time = null, data = null) {
-    if (setGet === "set") {
-      document.cookie = videoid + "=" + time + ";path=/;expires=300000";
+    if(evt === 'updatePlayHead' && data.uniquehash){
+      window.localStorage.setItem(data.uniquehash, JSON.stringify(data))
       return;
     }
-  
-    if (setGet === "get") {
-      var v = document.cookie.match("(^|;) ?" + videoid + "=([^;]*)(;|$)");
-      return v ? v[2] : null;
-    }
 
-    if(setGet === "track" && data !== null){
-
-        client.query(
-            q.Create(
-              q.Collection('user-asset-progress'),
-              { data: data }
-            )
-        );
-        q = faunadb.query;   
+    if(evt === 'getCurrentPlayHead' && data.uniquehash){
+      return window.localStorage.getItem(data.uniquehash) || 0;
     }
   }
-  
+}
+
+export function exlixirDB(obj)
+{
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "http://localhost:4000/api/videos/create", true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify({"video": obj}));
+  //console.log(JSON.stringify({"video": obj}));
+}
