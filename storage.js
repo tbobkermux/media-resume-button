@@ -1,7 +1,7 @@
 
 var faunadb = window.faunadb
 var q = faunadb.query;
-var client = new faunadb.Client({ secret: 'fnAEHuVFwvACBVJLGIsyhHVmk9vh2_i5F6BE_o5R' })
+var client = new faunadb.Client({ secret: '' })
 
 
 export default function storage(setGet, videoid, time = null, data = null) {
