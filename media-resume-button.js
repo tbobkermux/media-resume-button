@@ -27,7 +27,7 @@ button{
 
 let initTime = Date.now();
 
-class playheadPosition extends HTMLElement {
+class MediaResumeButton extends HTMLElement {
 
   constructor() {
 
@@ -123,7 +123,7 @@ class playheadPosition extends HTMLElement {
 }
 
 function addCustomElement(){
-  customElements.define("playhead-position",  playheadPosition)
+  customElements.define("media-resume-button",  MediaResumeButton)
 }
 
 // add call here, because onload did not work for me
