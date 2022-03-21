@@ -1,8 +1,13 @@
-import { exlixirDB, useLocalStorage } from "./storage.js";
+import { storage } from "./localstorage.js";
 
 const template = document.createElement("template");
+
+
 template.innerHTML = `
 <style>
+:host{
+  position:absolute;
+}
 button{
   font-family: monospace;
   padding: 0 .5rem;
@@ -27,7 +32,7 @@ button{
 
 let initTime = Date.now();
 
-class MediaResumeButton extends HTMLElement {
+class MediaResumeButton extends window.HTMLElement {
 
   constructor() {
 
@@ -37,94 +42,68 @@ class MediaResumeButton extends HTMLElement {
 
     this.trackServerSideTimeInterval = 6000;
 
-    this.userid = this.dataset.userid ?? 0;
-    this.videoid = this.dataset.videoid;
-    this.publisher = this.dataset.publisher;
-    this.player = document.getElementById(this.dataset.videoPlayer);
-    this.uniqueIdentifier = this.dataset.userid + this.dataset.videoid + this.dataset.publisher;
+    this.player = document.getElementById(this.getAttribute("player"));
+    storage.playbackid = this.getAttribute("playbackid");
+
+    this.setPlayhead = (storage.get() > 0) ? storage.get() : 0;
 
     this.resumeBtn = this.shadowRoot.querySelector("#resume");
     this.restartBtn = this.shadowRoot.querySelector("#restart");
 
-    this.buttons = document.querySelector("playhead-position");
-    this.buttons.style.position = "absolute";
-    this.buttons.style.left = this.player.getBoundingClientRect().left + window.scrollX;
-    this.buttons.style.top = this.player.getBoundingClientRect().top + window.scrollY;
-    this.buttons.style.width = this.player.width;
-    this.buttons.style.height = this.player.height;
+    this.changeRootStyles({
+      left: this.player.getBoundingClientRect().left + window.scrollX,
+      top: this.player.getBoundingClientRect().top + window.scrollY,
+      width: this.player.width,
+      height: this.player.height
+    });
+
+  }
 
 
-    this.trackPlayheadPosition = this.trackPlayheadPosition.bind(this);
-    this.setPlayheadPosition = this.setPlayheadPosition.bind(this);
-    //this.showButtons = this.showButtons(this);
-
+  changeRootStyles(styles){
+    for (const key in styles) {
+      this.style[key] = styles[key];
+    }
   }
 
   connectedCallback(){
 
-    this.player.addEventListener('timeupdate', this.trackPlayheadPosition, false);
-    this.player.addEventListener('play', this.setPlayheadPosition, false);
+    this.player.currentTime = this.setPlayhead;
+
+    if(this.setPlayhead == 0){
+      this.style.display = 'none';
+    }
+
+    this.player.addEventListener('timeupdate', function(e){
+      const controller = e.path[0];
+      storage.set({
+        playhead: controller.currentTime,
+      });
+    });
+
+    this.resumeBtn.addEventListener('click', function(e){
+      const player = e.path[4].player;
+      player.currentTime = storage.get();
+      player.play();
+      e.path[4].style.display = 'none';
+    });
+    
     this.player.onpause = () => {
       this.style.display = 'block';
     }
 
+    this.player.addEventListener('ended', function(){
+      storage.remove();
+      this.style.display = 'none';
+    })
+
     this.restartBtn.addEventListener("click", () =>{
-      this.setPlayheadPosition(0);
+      this.player.currentTime = 0;
+      this.style.display = 'none';
+      this.player.play();
     })
-
-    this.resumeBtn.addEventListener("click", () =>{
-      this.setPlayheadPosition('tracked');
-    })
-  }
-
-  trackPlayheadPosition() {
-    let timePassed = Date.now() - initTime;
-
-    let data = {
-      userid: this.userid,
-      videoid: this.videoid,
-      playhead: Math.round(this.player.currentTime),
-      publisher: this.publisher,
-      uniquehash: this.userid+this.videoid+this.publisher
-    }
-    useLocalStorage('updatePlayHead', data);
-
-    console.log(timePassed);
-
-    if(timePassed > this.trackServerSideTimeInterval){
-      exlixirDB(data);
-      initTime = Date.now();
-    }
-  }
-
-
-  setPlayheadPosition(start) {
-
-
-    if(typeof start == 'number'){
-      this.player.currentTime = start;
-      console.log("player current time " + start);
-    }
-
-    if(typeof start == 'string' && start == 'tracked'){
-      let queryLocalStorage = useLocalStorage("getCurrentPlayHead", {uniquehash: this.uniqueIdentifier});
-      console.log(queryLocalStorage);
-      queryLocalStorage = JSON.parse(queryLocalStorage);
-      this.player.currentTime = queryLocalStorage.playhead;
-    }
-
-    this.player.play();
-    this.style.display = 'none';
-
-
-
   }
 
 }
 
-function addCustomElement(){
-  customElements.define("media-resume-button",  MediaResumeButton)
-}
-
-// add call here, because onload did not work for me
-addCustomElement()
+customElements.define("media-resume-button",  MediaResumeButton)
