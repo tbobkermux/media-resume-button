@@ -7,6 +7,6 @@ Currently using cookies to store the progress will update to use localstorage or
 ## Example of the web component
 
 ```
-<media-resume-button data-videoid="123456" data-video-player="video-player" data-userid="123456 " />
+<media-resume-button player="video-elm-id" playbackid="mux-playback-id" />
 
 ```
