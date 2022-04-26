@@ -8,3 +8,7 @@ The buttons enable you to either resume the video from the last viewed position,
 ```
 <media-resume-button player="video-player" playbackid="OYWW4ZbsI93B00vrQkMCc7nhNJ9Hb011qyjGjZElC01Zz8" />
 ```
+
+## Run a demo
+
+Just use the ``` yarn start ``` to start a local http server that will launch the demo. 
