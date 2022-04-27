@@ -5,6 +5,8 @@ The buttons enable you to either resume the video from the last viewed position,
 
 ## Example below
 
+The ``` player ``` attribute is the element id of the video player.
+
 ```
 <media-resume-button player="video-player" playbackid="OYWW4ZbsI93B00vrQkMCc7nhNJ9Hb011qyjGjZElC01Zz8" />
 ```
