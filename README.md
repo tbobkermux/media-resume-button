@@ -10,5 +10,5 @@ The buttons enable you to either resume the video from the last viewed position,
 ```
 
 ## Run a demo
-
-Just use the ``` yarn start ``` to start a local http server that will launch the demo. 
+Install the live-server package using ``` yarn install ```
+Use the ``` yarn start ``` to start the local http server that will launch the demo. 
