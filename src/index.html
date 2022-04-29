@@ -5,8 +5,9 @@
     <script type="module" src="./media-resume-button.js"></script>
   </head>
   <body>
-    <div>
-      <h1>Resume Button Demo</h1>
+    <h1>Resume Button Demo</h1>
+
+    <div style="position: relative">
       <video
         id="video-player"
         slot="media"
@@ -17,11 +18,10 @@
         height="300"
         controls
       ></video>
+      <media-resume-button
+        player="video-player"
+        playbackid="OYWW4ZbsI93B00vrQkMCc7nhNJ9Hb011qyjGjZElC01Zz8"
+      />
     </div>
-
-    <media-resume-button
-      player="video-player"
-      playbackid="OYWW4ZbsI93B00vrQkMCc7nhNJ9Hb011qyjGjZElC01Zz8"
-    />
   </body>
 </html>

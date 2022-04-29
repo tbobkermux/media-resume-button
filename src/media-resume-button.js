@@ -4,30 +4,39 @@ const template = document.createElement("template");
 
 template.innerHTML = `
 <style>
-:host{
-  position:absolute;
-}
-button{
-  font-family: monospace;
-  padding: 0 .5rem;
-  cursor:pointer;
+:host {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 500px;
+  height: 300px;
 }
 
-#restart-resume{
-  margin:0;
-  padding:0;
-  height:100%;
-  width:100%;
+button {
+  font-family: monospace;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+#restart-resume {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
   text-align: center;
-  background-color:rgba(0, 0, 0, 0.7);;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 </style>
+
 <div id="restart-resume">
-<div style="position: relative;top: 40%;">
-<button type="button" id="restart">< Restart</button>
-<button type="button" id="resume">Resume ></button>
+  <div style="position: relative;top: 40%;">
+    <button type="button" id="restart">< Restart</button>
+    <button type="button" id="resume">Resume ></button>
+  </div>
 </div>
-</div>`;
+`;
 
 class MediaResumeButton extends window.HTMLElement {
 
@@ -47,19 +56,6 @@ class MediaResumeButton extends window.HTMLElement {
 
     this.resumeBtn = this.shadowRoot.querySelector("#resume");
     this.restartBtn = this.shadowRoot.querySelector("#restart");
-
-    this.changeRootStyles({
-      left: this.player.getBoundingClientRect().left + window.scrollX,
-      top: this.player.getBoundingClientRect().top + window.scrollY,
-      width: this.player.width,
-      height: this.player.height
-    });
-  }
-
-  changeRootStyles(styles) {
-    for (const key in styles) {
-      this.style[key] = styles[key];
-    }
   }
 
   connectedCallback() {
