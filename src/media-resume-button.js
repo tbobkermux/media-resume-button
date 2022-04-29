@@ -21,20 +21,19 @@ button {
 }
 
 #restart-resume {
-  margin: 0;
-  padding: 0;
   height: 100%;
   width: 100%;
-  text-align: center;
   background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 </style>
 
 <div id="restart-resume">
-  <div style="position: relative;top: 40%;">
-    <button type="button" id="restart">< Restart</button>
-    <button type="button" id="resume">Resume ></button>
-  </div>
+  <button type="button" id="restart">< Restart</button>
+  <button type="button" id="resume">Resume ></button>
 </div>
 `;
 
