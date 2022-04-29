@@ -2,7 +2,6 @@ import { storage } from "./localstorage.js";
 
 const template = document.createElement("template");
 
-
 template.innerHTML = `
 <style>
 :host{
@@ -30,12 +29,9 @@ button{
 </div>
 </div>`;
 
-let initTime = Date.now();
-
 class MediaResumeButton extends window.HTMLElement {
 
   constructor() {
-
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -58,62 +54,56 @@ class MediaResumeButton extends window.HTMLElement {
       width: this.player.width,
       height: this.player.height
     });
-
   }
 
-
-  changeRootStyles(styles){
+  changeRootStyles(styles) {
     for (const key in styles) {
       this.style[key] = styles[key];
     }
   }
 
-  connectedCallback(){
-
+  connectedCallback() {
     this.player.currentTime = this.setPlayhead;
 
-    if(this.setPlayhead == 0){
+    if (this.setPlayhead == 0) {
       this.style.display = 'none';
     }
 
-    this.player.addEventListener('timeupdate', function(e){
+    this.player.addEventListener('timeupdate', function (e) {
       const controller = e.path[0];
       storage.set({
         playhead: controller.currentTime,
       });
     });
 
-    this.player.addEventListener('ended', function(){
+    this.player.addEventListener('ended', function () {
       storage.remove();
       this.style.display = 'none';
     })
 
-    this.player.addEventListener('seeking', function(e){
+    this.player.addEventListener('seeking', function (e) {
       window.mediaResumeButton.style.display = 'none';
       console.log("seeeking....")
     })
-    this.player.onpause = function(e) {
+
+    this.player.onpause = function (e) {
       window.mediaResumeButton.style.display = 'block';
-      console.log(e);
       console.log(e);
     }
 
-    this.resumeBtn.addEventListener('click', function(e){
+    this.resumeBtn.addEventListener('click', function (e) {
       const player = e.path[4].player;
       player.currentTime = storage.get();
       player.play();
       e.path[4].style.display = 'none';
     });
 
-    this.restartBtn.addEventListener("click", function(){
+    this.restartBtn.addEventListener("click", function () {
       window.mainPlayer.currentTime = 0;
       window.mediaResumeButton.style.display = 'none';
       window.mainPlayer.play();
     })
-
-
   }
-
 }
 
-customElements.define("media-resume-button",  MediaResumeButton)
+customElements.define("media-resume-button", MediaResumeButton);

@@ -5,21 +5,23 @@
     <script type="module" src="./media-resume-button.js"></script>
   </head>
   <body>
-
-
     <div>
       <h1>Resume Button Demo</h1>
       <video
-       id="video-player"
-       slot="media"
-       src="https://stream.mux.com/OYWW4ZbsI93B00vrQkMCc7nhNJ9Hb011qyjGjZElC01Zz8/high.mp4"
-       muted
-       preload="none"
-       width="500" height="300"
-       controls
+        id="video-player"
+        slot="media"
+        src="https://stream.mux.com/OYWW4ZbsI93B00vrQkMCc7nhNJ9Hb011qyjGjZElC01Zz8/high.mp4"
+        muted
+        preload="none"
+        width="500"
+        height="300"
+        controls
       ></video>
-       </div>
+    </div>
 
-       <media-resume-button player="video-player" playbackid="OYWW4ZbsI93B00vrQkMCc7nhNJ9Hb011qyjGjZElC01Zz8" />
+    <media-resume-button
+      player="video-player"
+      playbackid="OYWW4ZbsI93B00vrQkMCc7nhNJ9Hb011qyjGjZElC01Zz8"
+    />
   </body>
 </html>
