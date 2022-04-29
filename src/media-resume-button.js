@@ -46,9 +46,7 @@ class MediaResumeButton extends window.HTMLElement {
 
     this.trackServerSideTimeInterval = 6000;
 
-    window.mainPlayer = document.getElementById(this.getAttribute("player"));
-    window.mediaResumeButton = this;
-    this.player = window.mainPlayer;
+    this.player = document.getElementById("video-player");
     storage.playbackid = this.getAttribute("playbackid");
 
     this.setPlayhead = (storage.get() > 0) ? storage.get() : 0;
@@ -58,45 +56,38 @@ class MediaResumeButton extends window.HTMLElement {
   }
 
   connectedCallback() {
-    this.player.currentTime = this.setPlayhead;
+    const player = this.player;
+    player.currentTime = this.setPlayhead;
 
     if (this.setPlayhead == 0) {
       this.style.display = 'none';
     }
 
-    this.player.addEventListener('timeupdate', function (e) {
-      const controller = e.path[0];
+    player.addEventListener('timeupdate', (e) => {
       storage.set({
-        playhead: controller.currentTime,
+        playhead: e.target.currentTime,
       });
     });
 
-    this.player.addEventListener('ended', function () {
+    player.addEventListener('ended', () => {
       storage.remove();
       this.style.display = 'none';
-    })
-
-    this.player.addEventListener('seeking', function (e) {
-      window.mediaResumeButton.style.display = 'none';
-      console.log("seeeking....")
-    })
-
-    this.player.onpause = function (e) {
-      window.mediaResumeButton.style.display = 'block';
-      console.log(e);
-    }
-
-    this.resumeBtn.addEventListener('click', function (e) {
-      const player = e.path[4].player;
-      player.currentTime = storage.get();
-      player.play();
-      e.path[4].style.display = 'none';
     });
 
-    this.restartBtn.addEventListener("click", function () {
-      window.mainPlayer.currentTime = 0;
-      window.mediaResumeButton.style.display = 'none';
-      window.mainPlayer.play();
+    player.addEventListener('pause', () => {
+      this.style.display = 'block';
+    });
+
+    this.resumeBtn.addEventListener('click', () => {
+      this.style.display = 'none';
+      player.currentTime = storage.get();
+      player.play();
+    });
+
+    this.restartBtn.addEventListener("click", () => {
+      this.style.display = 'none';
+      player.currentTime = 0;
+      player.play();
     })
   }
 }
