@@ -1,5 +1,3 @@
-import { storage } from "./localstorage.js";
-
 const template = document.createElement("template");
 
 template.innerHTML = `
@@ -44,12 +42,10 @@ class MediaResumeButton extends window.HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-    this.trackServerSideTimeInterval = 6000;
-
     this.player = document.getElementById("video-player");
-    storage.playbackid = this.getAttribute("playbackid");
+    this.playbackId = this.getAttribute("playbackid");
 
-    this.setPlayhead = (storage.get() > 0) ? storage.get() : 0;
+    this.lastKnownTime = window.localStorage.getItem(this.playbackId) || 0;
 
     this.resumeBtn = this.shadowRoot.querySelector("#resume");
     this.restartBtn = this.shadowRoot.querySelector("#restart");
@@ -57,20 +53,18 @@ class MediaResumeButton extends window.HTMLElement {
 
   connectedCallback() {
     const player = this.player;
-    player.currentTime = this.setPlayhead;
+    player.currentTime = this.lastKnownTime;
 
-    if (this.setPlayhead == 0) {
+    if (this.lastKnownTime === 0) {
       this.style.display = 'none';
     }
 
     player.addEventListener('timeupdate', (e) => {
-      storage.set({
-        playhead: e.target.currentTime,
-      });
+      window.localStorage.setItem(this.playbackId, e.target.currentTime);
     });
 
     player.addEventListener('ended', () => {
-      storage.remove();
+      window.localStorage.removeItem(this.playbackId);
       this.style.display = 'none';
     });
 
@@ -80,7 +74,7 @@ class MediaResumeButton extends window.HTMLElement {
 
     this.resumeBtn.addEventListener('click', () => {
       this.style.display = 'none';
-      player.currentTime = storage.get();
+      player.currentTime = window.localStorage.getItem(this.playbackId) || 0;
       player.play();
     });
 
